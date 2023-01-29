@@ -6,6 +6,8 @@
     "rsm-binary-io",
     "spdlog",
     "gtest",
-    "commonlibsse-ng"
+    "commonlibsse-ng-flatrim",
+    "fmt",
+    "ryml"
   ]
 }

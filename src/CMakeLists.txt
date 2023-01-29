@@ -74,30 +74,8 @@ target_include_directories(
 )
 
 # CommonLib
-if(${SKYRIM_AE})
-	add_subdirectory("${ROOT_DIR}/CommonLib/AE" CommonLibSSE EXCLUDE_FROM_ALL)
-    target_link_libraries(
-        "${PROJECT_NAME}"
-        PUBLIC
-            CommonLibSSE::CommonLibSSE
-    )
-elseif(${SKYRIM_SE})
-	add_subdirectory("${ROOT_DIR}/CommonLib/SE" CommonLibSSE EXCLUDE_FROM_ALL)
-    target_link_libraries(
-        "${PROJECT_NAME}"
-        PUBLIC
-            CommonLibSSE::CommonLibSSE
-    )
-elseif(${SKYRIM_VR})
-	add_subdirectory("${ROOT_DIR}/CommonLib/VR" CommonLibVR EXCLUDE_FROM_ALL)
-    target_link_libraries(
-        "${PROJECT_NAME}"
-        PUBLIC
-            CommonLibVR::CommonLibVR
-    )
-endif()
-
 # Include spdlog
+find_package(CommonLibSSE CONFIG REQUIRED)
 find_package(spdlog CONFIG REQUIRED)
 target_link_libraries("${PROJECT_NAME}" PUBLIC spdlog::spdlog)
 

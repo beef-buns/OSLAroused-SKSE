@@ -8,6 +8,8 @@
 #include "Papyrus/PapyrusInterface.h"
 #include "Papyrus/PapyrusActor.h"
 
+using namespace SKSE::log;
+
 namespace
 {
 	void InitializeLog()
@@ -17,7 +19,10 @@ namespace
 			util::report_and_fail("Failed to find standard logging directory"sv);
 		}
 
-		*path /= fmt::format("{}.log"sv, Plugin::NAME);
+		auto* plugin = SKSE::PluginDeclaration::GetSingleton();
+		*path /= fmt::format("{}.log", plugin->GetName());
+
+		// *path /= plugin->GetName();
 		auto sink = std::make_shared<spdlog::sinks::basic_file_sink_mt>(path->string(), true);
 		const auto level = spdlog::level::info;
 
@@ -63,7 +68,9 @@ extern "C" DLLEXPORT constinit auto SKSEPlugin_Version = []() {
 extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Load(const SKSE::LoadInterface* a_skse)
 {
 	InitializeLog();
-	logger::info("{} v{}"sv, Plugin::NAME, Plugin::VERSION.string());
+	auto* plugin = SKSE::PluginDeclaration::GetSingleton();
+	//SKSE::log::info(plugin->GetName());
+	info("{} v{}", plugin->GetName(), plugin->GetVersion());
 
 	SKSE::Init(a_skse);
 
@@ -84,6 +91,7 @@ extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Load(const SKSE::LoadInterface* a_s
 	return true;
 }
 
+/*
 extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Query(const SKSE::QueryInterface* a_skse, SKSE::PluginInfo* a_info)
 {
 	a_info->infoVersion = SKSE::PluginInfo::kVersion;
@@ -91,9 +99,10 @@ extern "C" DLLEXPORT bool SKSEAPI SKSEPlugin_Query(const SKSE::QueryInterface* a
 	a_info->version = Plugin::VERSION.pack();
 
 	if (a_skse->IsEditor()) {
-		logger::critical("Loaded in editor, marking as incompatible"sv);
+		critical("Loaded in editor, marking as incompatible");
 		return false;
 	}
 
 	return true;
 }
+*/
