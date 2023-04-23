@@ -24,15 +24,15 @@ namespace WorldChecks
 {
 	void ArousalUpdateLoop();
 
-	class AurousalUpdateTicker : public Utilities::Ticker
+	class ArousalUpdateTicker : public Utilities::Ticker
 	{
 	public:
-		AurousalUpdateTicker(std::chrono::milliseconds interval) :
+		ArousalUpdateTicker(std::chrono::milliseconds interval) :
 			Utilities::Ticker(std::function<void()>(ArousalUpdateLoop), interval) {}
 
-		static AurousalUpdateTicker* GetSingleton()
+		static ArousalUpdateTicker* GetSingleton()
 		{
-			static AurousalUpdateTicker singleton(std::chrono::milliseconds(5000));
+			static ArousalUpdateTicker singleton(std::chrono::milliseconds(5000));
 			return &singleton;
 		}
 
