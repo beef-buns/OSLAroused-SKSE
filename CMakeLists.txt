@@ -75,7 +75,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE ryml::ryml)
 
 target_precompile_headers(${PROJECT_NAME} PRIVATE src/PCH.h)
 
-set(MOD_FOLDER "output/")
+set(MOD_FOLDER "C:\\Users\\adwu\\AppData\\Local\\ModOrganizer\\Skyrim Special Edition\\mods\\OSL Aroused NG")
 set(DLL_FOLDER "${MOD_FOLDER}/SKSE/Plugins")
 
 # Create output directory if it does not exist
