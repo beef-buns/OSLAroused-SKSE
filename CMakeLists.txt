@@ -8,16 +8,6 @@ project(
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Add options for specifying the version
-# Only one version may be provided at a time
-option(SKYRIM_AE "Compile plugin for Skyrim AE" OFF)
-option(SKYRIM_SE "Compile plugin for Skyrim SE" ON)
-option(SKYRIM_VR "Compile plugin for Skyrim VR" OFF)
-
-# set(SKYRIM_SUPPORT_AE true)
-# set(SKYRIM_SUPPORT_SE true)
-# set(SKYRIM_SUPPORT_VR true)
-
 source_group(TREE "${ROOT_DIR}" FILES ${SOURCE_FILES})
 
 set(VERSION_HEADER "${CMAKE_CURRENT_BINARY_DIR}/src/Plugin.h")
@@ -50,7 +40,7 @@ file(
         "${SOURCE_DIR}/Integrations/*.cpp"
         "${SOURCE_DIR}/Integrations/*.h")
 
-source_group(TREE "${ROOT_DIR}" FILES ${sources})
+      #source_group(TREE "${ROOT_DIR}" FILES ${sources})
 
 find_package(CommonLibSSE CONFIG REQUIRED)
 find_package(ryml CONFIG REQUIRED)
@@ -68,40 +58,49 @@ target_include_directories(
   #      $<INSTALL_INTERFACE:src> ${ARTICUNO_INCLUDE_DIRS}
 )
 
-target_include_directories(
-        ${PROJECT_NAME} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
+# target_include_directories(
+#        ${PROJECT_NAME} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE ryml::ryml)
 
+# add_commonlibsse_plugin(${PROJECT_NAME} SOURCES src/main.cpp src/Utility.h src/Events.h src/QuickTorch.h src/QuickTorch.cpp) # <--- specifies plugin.cpp
+# target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_23)
 target_precompile_headers(${PROJECT_NAME} PRIVATE src/PCH.h)
 
-set(MOD_FOLDER "C:\\Users\\adwu\\AppData\\Local\\ModOrganizer\\Skyrim Special Edition\\mods\\OSL Aroused NG")
-set(DLL_FOLDER "${MOD_FOLDER}/SKSE/Plugins")
+list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
-# Create output directory if it does not exist
-add_custom_command(
+if(DEFINED ENV{SKYRIM_FOLDER} AND IS_DIRECTORY "$ENV{SKYRIM_FOLDER}/Data")
+    set(OUTPUT_FOLDER "$ENV{SKYRIM_FOLDER}/Data")
+endif()
+
+if(DEFINED ENV{SKYRIM_MODS_FOLDER} AND IS_DIRECTORY "$ENV{SKYRIM_MODS_FOLDER}")
+    set(OUTPUT_FOLDER "$ENV{SKYRIM_MODS_FOLDER}/OSL Aroused NG")
+endif()
+
+if(DEFINED OUTPUT_FOLDER)
+    # If you specify an <OUTPUT_FOLDER> (including via environment variables)
+    # then we'll copy your mod files into Skyrim or a mod manager for you!
+
+    # Copy the SKSE plugin .dll files into the SKSE/Plugins/ folder
+    set(DLL_FOLDER "${OUTPUT_FOLDER}/SKSE/Plugins")
+
+    message(STATUS "SKSE plugin output folder: ${DLL_FOLDER}")
+
+    add_custom_command(
         TARGET "${PROJECT_NAME}"
         POST_BUILD
         COMMAND "${CMAKE_COMMAND}" -E make_directory "${DLL_FOLDER}"
-        VERBATIM)
-
-# Copy the output .dll and debug .pdb to the configured output directory
-add_custom_command(
-        TARGET "${PROJECT_NAME}"
-        POST_BUILD
-        COMMAND "${CMAKE_COMMAND}" -E copy_if_different
-        "$<TARGET_FILE:${PROJECT_NAME}>" "${DLL_FOLDER}"
-        COMMAND "${CMAKE_COMMAND}" -E copy_if_different
-        "$<TARGET_PDB_FILE:${PROJECT_NAME}>" "${DLL_FOLDER}"
+        COMMAND "${CMAKE_COMMAND}" -E copy_if_different "$<TARGET_FILE:${PROJECT_NAME}>" "${DLL_FOLDER}/$<TARGET_FILE_NAME:${PROJECT_NAME}>"
         VERBATIM
-)
+    )
 
-# Enable testing
-#enable_testing()
-
-# Process the .in templates in the cmake/ folder for Plugin.h and version.rc
-list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
-
-# Process the CMakeLists.txt in the src/ folder
-# add_subdirectory(src)
-#add_subdirectory(test)
+    # If you perform a "Debug" build, also copy .pdb file (for debug symbols)
+    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+        add_custom_command(
+            TARGET "${PROJECT_NAME}"
+            POST_BUILD
+            COMMAND "${CMAKE_COMMAND}" -E copy_if_different "$<TARGET_PDB_FILE:${PROJECT_NAME}>" "${DLL_FOLDER}/$<TARGET_PDB_FILE_NAME:${PROJECT_NAME}>"
+            VERBATIM
+        )
+    endif()
+endif()
