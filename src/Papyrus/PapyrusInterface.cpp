@@ -1,11 +1,11 @@
 #include "PapyrusInterface.h"
 
-#include "PersistedData.h"
 #include "Managers/ArousalManager.h"
 #include "Managers/LibidoManager.h"
+#include "PersistedData.h"
 #include "Utilities/Utils.h"
-#include <Settings.h>
 #include <Integrations/DevicesIntegration.h>
+#include <Settings.h>
 
 float PapyrusInterface::GetArousal(RE::StaticFunctionTag*, RE::Actor* actorRef)
 {

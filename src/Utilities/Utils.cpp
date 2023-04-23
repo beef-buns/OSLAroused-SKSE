@@ -1,5 +1,5 @@
-#include "PersistedData.h"
 #include "Utils.h"
+#include "PersistedData.h"
 
 RE::FormID Utilities::Forms::ResolveFormId(uint32_t modIndex, RE::FormID rawFormId)
 {

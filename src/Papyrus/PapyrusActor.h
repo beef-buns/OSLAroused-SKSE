@@ -6,6 +6,5 @@ namespace PapyrusActor
 
 	std::vector<int> GetActiveDeviceTypeIds(RE::StaticFunctionTag* base, RE::Actor* actorRef);
 
-
 	bool RegisterFunctions(RE::BSScript::IVirtualMachine* vm);
 };

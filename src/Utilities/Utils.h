@@ -1,8 +1,8 @@
 #pragma once
 
-#include <random>
-#include "Managers/SceneManager.h"
 #include "Managers/ActorStateManager.h"
+#include "Managers/SceneManager.h"
+#include <random>
 
 namespace Utilities
 {
