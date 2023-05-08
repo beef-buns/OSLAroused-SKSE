@@ -58,17 +58,18 @@ SKSEPluginLoad(const SKSE::LoadInterface* skse)
 	serialization->SetLoadCallback(PersistedData::LoadCallback);
 	serialization->SetRevertCallback(PersistedData::RevertCallback);
 
+	// Hooks::ActorEquipHook::InstallHook();
+
 	SKSE::GetMessagingInterface()->RegisterListener([](SKSE::MessagingInterface::Message* message) {
 		if (message->type == SKSE::MessagingInterface::kDataLoaded) {
 			RuntimeEvents::OnEquipEvent::RegisterEvent();
-			WorldChecks::AurousalUpdateTicker::GetSingleton()->Start();
-			logger::debug("kDataLoaded Sanity Check");
+			WorldChecks::ArousalUpdateTicker::GetSingleton()->Start();
+			logger::info("kDataLoaded Sanity Check");
 		}
 
 		if (message->type == SKSE::MessagingInterface::kPostLoadGame) {
-			//Distribute Keywords
 			Utilities::Keywords::DistributeKeywords();
-			logger::debug("kPostLoadGame Sanity Check");
+			logger::info("kPostLoadGame Sanity Check");
 		}
 	});
 

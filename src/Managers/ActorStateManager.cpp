@@ -13,9 +13,21 @@ bool ActorStateManager::GetActorNaked(RE::Actor* actorRef)
 	return m_ActorNakedStateCache(actorRef);
 }
 
+void AddNakedPerks(RE::Actor* actorRef) {}
+
+void RemoveNakedPerks(RE::Actor* actor) {}
+
 void ActorStateManager::ActorNakedStateChanged(RE::Actor* actorRef, bool newNaked)
 {
 	m_ActorNakedStateCache.UpdateItem(actorRef, newNaked);
+
+	if (newNaked) {
+		AddNakedPerks(actorRef);
+
+	} else {
+		RemoveNakedPerks(actorRef);
+	}
+
 	Papyrus::Events::SendActorNakedUpdatedEvent(actorRef, newNaked);
 	
 	//Actor Naked updated so remove libido cache entry to force refresh on next fetch

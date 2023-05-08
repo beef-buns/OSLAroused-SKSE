@@ -1,5 +1,4 @@
 #include "PapyrusInterface.h"
-
 #include "Managers/ArousalManager.h"
 #include "Managers/LibidoManager.h"
 #include "PersistedData.h"
