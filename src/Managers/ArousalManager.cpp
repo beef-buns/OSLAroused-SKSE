@@ -1,7 +1,7 @@
 #include "ArousalManager.h"
 #include "Papyrus.h"
 #include "PersistedData.h"
-#include "Settings.h"
+// #include "Settings.h"
 #include "Utilities/Utils.h"
 
 using namespace PersistedData;

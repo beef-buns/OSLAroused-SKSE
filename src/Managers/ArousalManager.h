@@ -9,6 +9,5 @@ namespace ArousalManager
 	float ModifyArousal(RE::Actor* actorRef, float value);
 	void UpdateArousal(RE::Actor* actor);
 
-
 	float CalculateArousal(RE::Actor* actorRef, float timePassed);
 }

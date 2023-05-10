@@ -1,7 +1,7 @@
 #include "LibidoManager.h"
 #include "PersistedData.h"
 #include "Utilities/Utils.h"
-#include "Settings.h"
+// #include "Settings.h"
 #include "Integrations/DevicesIntegration.h"
 
 float CalculateActorLibidoModifier(RE::Actor* actorRef)

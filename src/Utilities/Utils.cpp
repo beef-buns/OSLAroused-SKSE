@@ -177,3 +177,18 @@ std::set<RE::FormID> Utilities::Actor::GetWornArmorKeywords(RE::Actor* actorRef,
 	}
 	return wornArmorKeywordIds;
 }
+
+bool Utilities::Actor::IsWearingEroticArmor(RE::Actor* actorRef)
+{
+	if (IsNakedCached(actorRef)) {
+		return false;
+	}
+
+	const auto eroticKeyword = Settings::GetSingleton()->GetEroticArmorKeyword();
+	if (!eroticKeyword) {
+		return false;
+	}
+
+	const auto wornKeywords = Utilities::Actor::GetWornArmorKeywords(actorRef);
+	return wornKeywords.contains(eroticKeyword->formID);
+}

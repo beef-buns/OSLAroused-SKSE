@@ -1,7 +1,7 @@
 #include "ActorStateManager.h"
-#include "Utilities/Utils.h"
-#include "Papyrus.h"
 #include "Managers/LibidoManager.h"
+#include "Papyrus.h"
+#include "Utilities/Utils.h"
 
 bool IsActorNaked(RE::Actor* actorRef)
 {
@@ -13,7 +13,10 @@ bool ActorStateManager::GetActorNaked(RE::Actor* actorRef)
 	return m_ActorNakedStateCache(actorRef);
 }
 
-void AddNakedPerks(RE::Actor* actorRef) {}
+void AddNakedPerks(RE::Actor* actorRef)
+{
+	// 0x12A805 or 0x805?
+}
 
 void RemoveNakedPerks(RE::Actor* actor) {}
 
@@ -29,7 +32,7 @@ void ActorStateManager::ActorNakedStateChanged(RE::Actor* actorRef, bool newNake
 	}
 
 	Papyrus::Events::SendActorNakedUpdatedEvent(actorRef, newNaked);
-	
+
 	//Actor Naked updated so remove libido cache entry to force refresh on next fetch
 	LibidoManager::GetSingleton()->ActorLibidoModifiersUpdated(actorRef);
 }
@@ -79,4 +82,22 @@ bool ActorStateManager::IsHumanoidActor(RE::Actor* actorRef)
 	}
 
 	return false;
+}
+
+bool ActorStateManager::IsAttractedToMen(RE::Actor* actorRef)
+{
+	if (!actorRef || actorRef->IsChild()) {
+		return false;
+	}
+
+	return actorRef->IsInFaction(m_AttractedToMalesFaction);
+}
+
+bool ActorStateManager::IsAttractedToWomen(RE::Actor* actorRef)
+{
+	if (!actorRef || actorRef->IsChild()) {
+		return false;
+	}
+
+	return actorRef->IsInFaction(m_AttractedToFemalesFaction);
 }

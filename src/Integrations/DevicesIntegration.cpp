@@ -1,6 +1,6 @@
 #include "DevicesIntegration.h"
 #include "Utilities/Utils.h"
-#include "Settings.h"
+// #include "Settings.h"
 #include <Managers/LibidoManager.h>
 
 WornDeviceField GetWornDevices(RE::Actor* actorRef, RE::TESForm* equipmentToIgnore)

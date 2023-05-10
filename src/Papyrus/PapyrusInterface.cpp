@@ -119,13 +119,16 @@ bool PapyrusInterface::IsViewingScene(RE::StaticFunctionTag*, RE::Actor* actorRe
 
 bool PapyrusInterface::IsWearingEroticArmor(RE::StaticFunctionTag*, RE::Actor* actorRef)
 {
-	if (!Utilities::Actor::IsNakedCached(actorRef)) {
+	/*	if (!Utilities::Actor::IsNakedCached(actorRef)) {
 		if (const auto eroticKeyword = Settings::GetSingleton()->GetEroticArmorKeyword()) {
 			const auto wornKeywords = Utilities::Actor::GetWornArmorKeywords(actorRef);
 			return wornKeywords.contains(eroticKeyword->formID);
 		}
 	}
 	return false;
+	*/
+
+	return Utilities::Actor::IsWearingEroticArmor(actorRef);
 }
 
 float PapyrusInterface::WornDeviceBaselineGain(RE::StaticFunctionTag*, RE::Actor* actorRef)
