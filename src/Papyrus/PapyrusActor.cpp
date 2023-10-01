@@ -1,7 +1,7 @@
 #include "PapyrusActor.h"
-#include "Utilities/Utils.h"
 #include "Integrations/DevicesIntegration.h"
 #include "Settings.h"
+#include "Utilities/Utils.h"
 
 std::vector<RE::TESForm*> PapyrusActor::GetAllEquippedArmor(RE::StaticFunctionTag*, RE::Actor* actorRef)
 {

@@ -8,40 +8,99 @@ project(
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Add options for specifying the version
-# Only one version may be provided at a time
-option(SKYRIM_AE "Compile plugin for Skyrim AE" OFF)
-option(SKYRIM_SE "Compile plugin for Skyrim SE" OFF)
-option(SKYRIM_VR "Compile plugin for Skyrim VR" OFF)
+source_group(TREE "${ROOT_DIR}" FILES ${SOURCE_FILES})
 
-# Exit if no Skyrim version was specified
-if(NOT ${SKYRIM_AE} AND NOT ${SKYRIM_SE} AND NOT ${SKYRIM_VR})
-	message(FATAL_ERROR "Run cmake using one of the build/ .bat files for building Skyrim")
-	return()
-endif()
+set(VERSION_HEADER "${CMAKE_CURRENT_BINARY_DIR}/src/Plugin.h")
+configure_file(
+	"cmake/Plugin.h.in"
+	"${VERSION_HEADER}"
+	@ONLY
+)
+source_group("src" FILES "${VERSION_HEADER}")
 
-# Add support for #ifdef for SKYRIM_AE, SKYRIM_SE, and SKYRIM_VR
-if(${SKYRIM_AE})
-	message(INFO "Building CMake setup for Skyrim AE: ${SKYRIM_AE}")
-	add_definitions(-DSKYRIM_AE)
-	set(SKYRIM_SUPPORT_AE true)
-	set(SKYRIM_VERSION AE)
-elseif(${SKYRIM_SE})
-	message(INFO "Building CMake setup for Skyrim SE: ${SKYRIM_SE}")
-	add_definitions(-DSKYRIM_SE)
-	set(SKYRIM_VERSION SE)
-elseif(${SKYRIM_VR})
-	message(INFO "Building CMake setup for Skyrim VR: ${SKYRIM_VR}")
-	add_definitions(-DSKYRIM_VR)
-	set(SKYRIM_VERSION VR)
-endif()
+configure_file(
+	"cmake/version.rc.in"
+	"${CMAKE_CURRENT_BINARY_DIR}/version.rc"
+	@ONLY
+)
 
-# Enable testing
-#enable_testing()
+set(ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
+set(SOURCE_DIR "${ROOT_DIR}/src")
+file(
+        GLOB
+        sources
+        "${SOURCE_DIR}/*.cpp"
+        "${SOURCE_DIR}/*.h"
+        "${SOURCE_DIR}/Papyrus/*.cpp"
+        "${SOURCE_DIR}/Papyrus/*.h"
+        "${SOURCE_DIR}/Managers/*.cpp"
+        "${SOURCE_DIR}/Managers/*.h"
+        "${SOURCE_DIR}/Utilities/*.cpp"
+        "${SOURCE_DIR}/Utilities/*.h"
+        "${SOURCE_DIR}/Integrations/*.cpp"
+        "${SOURCE_DIR}/Integrations/*.h")
 
-# Process the .in templates in the cmake/ folder for Plugin.h and version.rc
+      #source_group(TREE "${ROOT_DIR}" FILES ${sources})
+
+find_package(CommonLibSSE CONFIG REQUIRED)
+find_package(ryml CONFIG REQUIRED)
+#find_package(articuno CONFIG REQUIRED)
+#find_path(ARTICUNO_INCLUDE_DIRS "articuno/articuno.h")
+
+add_commonlibsse_plugin(${PROJECT_NAME} SOURCES ${sources})
+
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
-# Process the CMakeLists.txt in the src/ folder
-add_subdirectory(src)
-#add_subdirectory(test)
+target_include_directories(
+        ${PROJECT_NAME}
+        PRIVATE $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/src>
+  #      $<INSTALL_INTERFACE:src> ${ARTICUNO_INCLUDE_DIRS}
+)
+
+# target_include_directories(
+#        ${PROJECT_NAME} PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE ryml::ryml)
+
+# add_commonlibsse_plugin(${PROJECT_NAME} SOURCES src/main.cpp src/Utility.h src/Events.h src/QuickTorch.h src/QuickTorch.cpp) # <--- specifies plugin.cpp
+# target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_23)
+target_precompile_headers(${PROJECT_NAME} PRIVATE src/PCH.h)
+
+list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
+
+if(DEFINED ENV{SKYRIM_FOLDER} AND IS_DIRECTORY "$ENV{SKYRIM_FOLDER}/Data")
+    set(OUTPUT_FOLDER "$ENV{SKYRIM_FOLDER}/Data")
+endif()
+
+if(DEFINED ENV{SKYRIM_MODS_FOLDER} AND IS_DIRECTORY "$ENV{SKYRIM_MODS_FOLDER}")
+    set(OUTPUT_FOLDER "$ENV{SKYRIM_MODS_FOLDER}/OSL Aroused NG")
+endif()
+
+if(DEFINED OUTPUT_FOLDER)
+    # If you specify an <OUTPUT_FOLDER> (including via environment variables)
+    # then we'll copy your mod files into Skyrim or a mod manager for you!
+
+    # Copy the SKSE plugin .dll files into the SKSE/Plugins/ folder
+    set(DLL_FOLDER "${OUTPUT_FOLDER}/SKSE/Plugins")
+
+    message(STATUS "SKSE plugin output folder: ${DLL_FOLDER}")
+
+    add_custom_command(
+        TARGET "${PROJECT_NAME}"
+        POST_BUILD
+        COMMAND "${CMAKE_COMMAND}" -E make_directory "${DLL_FOLDER}"
+        COMMAND "${CMAKE_COMMAND}" -E copy_if_different "$<TARGET_FILE:${PROJECT_NAME}>" "${DLL_FOLDER}/$<TARGET_FILE_NAME:${PROJECT_NAME}>"
+        VERBATIM
+    )
+
+    # If you perform a "Debug" build, also copy .pdb file (for debug symbols)
+    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+        add_custom_command(
+            TARGET "${PROJECT_NAME}"
+            POST_BUILD
+            COMMAND "${CMAKE_COMMAND}" -E copy_if_different "$<TARGET_PDB_FILE:${PROJECT_NAME}>" "${DLL_FOLDER}/$<TARGET_PDB_FILE_NAME:${PROJECT_NAME}>"
+            VERBATIM
+        )
+    endif()
+endif()

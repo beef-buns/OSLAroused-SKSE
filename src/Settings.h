@@ -48,7 +48,6 @@ struct DeviceArousalBaselineChange
 	float BondageMittens = 10;
 };
 
-
 class Settings
 {
 public:
@@ -64,7 +63,7 @@ public:
 		if (bPlayerVal) {
 			m_PlayerMinLibidoValue = newVal;
 		} else {
-			m_NPCMinLibidoValue= newVal;
+			m_NPCMinLibidoValue = newVal;
 		}
 	}
 	float GetMinLibidoValue(bool bPlayerVal) const
@@ -95,11 +94,13 @@ public:
 		return m_LibidoChangeRate;
 	}
 
-	void SetNudeArousalBaseline(float newVal) { 
+	void SetNudeArousalBaseline(float newVal)
+	{
 		Locker locker(m_Lock);
-		m_IsNudeBaseline = newVal; 
+		m_IsNudeBaseline = newVal;
 	}
-	float GetNudeArousalBaseline() const { 
+	float GetNudeArousalBaseline() const
+	{
 		Locker locker(m_Lock);
 		return m_IsNudeBaseline;
 	}

@@ -146,7 +146,6 @@ namespace PersistedData
 		}
 	};
 
-	
 	class LastOrgasmTimeData final : public BaseFormFloat
 	{
 	public:

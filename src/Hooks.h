@@ -1,6 +1,7 @@
 #pragma once
 #include "PCH.h"
 
+// NOTE: This is unused atm
 namespace Hooks
 {
 	class ActorEquipHook

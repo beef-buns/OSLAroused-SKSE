@@ -1,8 +1,9 @@
 #pragma once
 
-#include <random>
-#include "Managers/SceneManager.h"
 #include "Managers/ActorStateManager.h"
+#include "Managers/SceneManager.h"
+#include "Settings.h"
+#include <random>
 
 namespace Utilities
 {
@@ -59,6 +60,8 @@ namespace Utilities
 		std::vector<RE::TESForm*> GetWornArmor(RE::Actor* actorRef);
 
 		std::set<RE::FormID> GetWornArmorKeywords(RE::Actor* actorRef, RE::TESForm* armorToIgnore = nullptr);
+
+		bool IsWearingEroticArmor(RE::Actor* actorRef);
 	}
 
 	namespace World
